@@ -111,75 +111,50 @@ class _PinVerificationPageState extends State<PinVerificationPage> {
         },
         builder: (context, state) {
           return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 24),
-                  // Icono o imagen
-                  Icon(
-                    widget.isSetup ? Icons.security : Icons.lock,
-                    size: 70,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  const SizedBox(height: 32),
-                  // Título
-                  Text(
-                    widget.isSetup
-                        ? 'Configura tu PIN de respaldo'
-                        : 'Ingresa tu PIN de acceso',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 24),
+                    // Icono o imagen
+                    Icon(
+                      widget.isSetup ? Icons.security : Icons.lock,
+                      size: 70,
+                      color: Theme.of(context).primaryColor,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  // Descripción
-                  Text(
-                    widget.isSetup
-                        ? 'Este PIN te permitirá acceder si la autenticación biométrica falla.'
-                        : 'Introduce tu PIN para acceder a la aplicación.',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  // Campo de PIN
-                  TextField(
-                    controller: _pinController,
-                    decoration: InputDecoration(
-                      labelText: 'PIN',
-                      errorText: _errorText.isNotEmpty ? _errorText : null,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 32),
+                    // Título
+                    Text(
+                      widget.isSetup
+                          ? 'Configura tu PIN de respaldo'
+                          : 'Ingresa tu PIN de acceso',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      prefixIcon: const Icon(Icons.pin),
+                      textAlign: TextAlign.center,
                     ),
-                    keyboardType: TextInputType.number,
-                    obscureText: true,
-                    maxLength: 6,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    onChanged: (_) {
-                      if (_errorText.isNotEmpty) {
-                        setState(() {
-                          _errorText = '';
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  // Campo de confirmación de PIN (solo para configuración)
-                  if (widget.isSetup)
+                    const SizedBox(height: 16),
+                    // Descripción
+                    Text(
+                      widget.isSetup
+                          ? 'Este PIN te permitirá acceder si la autenticación biométrica falla.'
+                          : 'Introduce tu PIN para acceder a la aplicación.',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    // Campo de PIN
                     TextField(
-                      controller: _confirmPinController,
+                      controller: _pinController,
                       decoration: InputDecoration(
-                        labelText: 'Confirmar PIN',
+                        labelText: 'PIN',
+                        errorText: _errorText.isNotEmpty ? _errorText : null,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -199,23 +174,50 @@ class _PinVerificationPageState extends State<PinVerificationPage> {
                         }
                       },
                     ),
-                  const SizedBox(height: 32),
-                  // Botón de envío
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _submitPin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 16),
+                    // Campo de confirmación de PIN (solo para configuración)
+                    if (widget.isSetup)
+                      TextField(
+                        controller: _confirmPinController,
+                        decoration: InputDecoration(
+                          labelText: 'Confirmar PIN',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: const Icon(Icons.pin),
+                        ),
+                        keyboardType: TextInputType.number,
+                        obscureText: true,
+                        maxLength: 6,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onChanged: (_) {
+                          if (_errorText.isNotEmpty) {
+                            setState(() {
+                              _errorText = '';
+                            });
+                          }
+                        },
                       ),
+                    const SizedBox(height: 32),
+                    // Botón de envío
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _submitPin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(widget.isSetup ? 'Guardar PIN' : 'Verificar'),
                     ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(widget.isSetup ? 'Guardar PIN' : 'Verificar'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
