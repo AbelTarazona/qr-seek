@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:seek_challenge/presentation/bloc/auth/auth_bloc.dart';
-import 'package:seek_challenge/presentation/widgets/biometric_button.dart';
+import '../bloc/auth/auth_bloc.dart';
 import 'home_page.dart';
 import 'pin_verification_page.dart';
+import '../widgets/biometric_button.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -41,9 +41,16 @@ class _AuthPageState extends State<AuthPage> {
               MaterialPageRoute(builder: (_) => const HomePage()),
             );
           } else if (state is BiometricFailedState) {
-            // Redireccionar a la pantalla de verificación de PIN
+            // Cargar información del usuario para verificar si ya tiene un PIN configurado
+            context.read<AuthBloc>().add(LoadUserInfoEvent());
+          } else if (state is UserInfoLoadedState) {
+            // Verificar si el usuario ya ha configurado un PIN
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const PinVerificationPage()),
+              MaterialPageRoute(
+                builder: (_) => PinVerificationPage(
+                  isSetup: !state.user.hasSetupPin,
+                ),
+              ),
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -65,16 +72,17 @@ class _AuthPageState extends State<AuthPage> {
                       width: 150,
                       height: 150,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                        color: Theme.of(context).primaryColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.qr_code,
+                        Icons.qr_code_scanner,
                         size: 80,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 32),
+                    // Título de la app
                     const Text(
                       'Seek Challenge',
                       style: TextStyle(
@@ -91,23 +99,20 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     ),
                     const Spacer(),
+                    // Botón de autenticación biométrica
                     if (_isLoading)
                       const CircularProgressIndicator()
                     else if (_isBiometricSupported)
                       BiometricButton(
                         onPressed: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(AuthenticateBiometricEvent());
+                          context.read<AuthBloc>().add(AuthenticateBiometricEvent());
                         },
                       )
                     else
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const PinVerificationPage()),
-                          );
+                          // Cargar información del usuario para verificar si ya tiene un PIN configurado
+                          context.read<AuthBloc>().add(LoadUserInfoEvent());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
