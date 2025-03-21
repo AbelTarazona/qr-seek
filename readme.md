@@ -14,6 +14,12 @@ Una aplicación móvil desarrollada en Flutter con integración nativa de Androi
 - **Gestión de Estado Avanzada**: Uso de BLoC para Flutter y Flow para Kotlin.
 - **Pruebas Unitarias**: Cobertura de pruebas para componentes clave.
 
+## Demo
+[Ver en YouTube](https://youtube.com/shorts/QqlPBKQFcvs?si=bFvkeMWDoClKDgFj)
+
+## APK
+[Descargar APK](https://we.tl/t-r3ebduIBML)
+
 ## Requisitos
 
 - Flutter SDK: ^3.0.0
